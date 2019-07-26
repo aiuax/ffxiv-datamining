@@ -1,11 +1,6 @@
 project 'ffxiv-datamining'
-    kind 'Utility'
+    kind 'None'
     language 'C++'
     cppdialect 'C++14'
 
     targetdir 'bin/%{cfg.buildcfg}'
-
-    postbuildcommands
-    {
-        '{COPY} csv "bin/%{cfg.buildcfg}/csv"'
-    }
