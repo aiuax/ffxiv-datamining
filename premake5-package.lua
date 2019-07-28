@@ -1,5 +1,5 @@
 project 'ffxiv-datamining'
-    kind 'None'
+    kind 'Utility'
     language 'C++'
     cppdialect 'C++14'
 
