@@ -11,8 +11,7 @@ public:
     virtual bool ReadCsvHeader(DefaultCSVReader& csv_reader) override
     {{
         csv_reader.read_header(io::ignore_extra_column
-{3}
-        );
+{3});
         csv_reader.next_line(); // column names
         csv_reader.next_line(); // column types
 
@@ -23,8 +22,7 @@ public:
     {{
         bool success{{
             csv_reader.read_row(
-{4}
-            )
+{4})
         }};
 
         return success;
