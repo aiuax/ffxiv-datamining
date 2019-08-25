@@ -29,15 +29,17 @@ def translate_csv_file(in_file_path, out_file_path, table_name):
 
             for column_name, column_raw_name in zip(column_names, column_raw_names):
                 header_names += "            , \"{0}\"\n".format(column_raw_name)
-                header_vars += "            {0} out_entry.{1}_\n".format( "," if len(header_vars) > 0 else "", "id" if len(header_vars) == 0 else (column_name if len(column_name) > 0 else "c{0}".format(column_raw_name)))
-                header_stringify_vars += "            {0} \"{1}\"\n".format("," if len(header_stringify_vars) > 0 else "", "id" if len(header_vars) == 0 else (column_name if len(column_name) > 0 else "c{0}".format(column_raw_name)))
+                header_vars += "                {0} out_entry.{1}_\n".format( "," if len(header_vars) > 0 else " ", "id" if len(header_vars) == 0 else (column_name if len(column_name) > 0 else "c{0}".format(column_raw_name)))
+                header_stringify_vars += "                {0} \"{1}\"\n".format("," if len(header_stringify_vars) > 0 else " ", "id" if len(header_vars) == 0 else (column_name if len(column_name) > 0 else "c{0}".format(column_raw_name)))
 
             variable_defs = ""
             using_defs = ""
             stringify_string = ""
             seen_types = set()
             for column_type, column_name, column_raw_name in zip(column_types, column_names, column_raw_names):
-                cname = "id" if len(variable_defs) == 0 else (column_name if len(column_name) > 0 else "c{0}".format(column_raw_name))
+                cname_pre = "id" if len(variable_defs) == 0 else (column_name if len(column_name) > 0 else "c{0}".format(column_raw_name))
+                cname = "out_entry.{0}".format(cname_pre)
+
                 if column_type == "str":
                     column_type = "std::string"
                     stringify_string = "{0}_".format(cname)
@@ -78,8 +80,8 @@ def translate_csv_file(in_file_path, out_file_path, table_name):
                     seen_types.add(column_type)
                     using_defs += "    using {0} = int32_t;\n".format(column_type)
                     stringify_string = "std::to_string({0}_)".format(cname)
-                variable_defs += "    {0} {1}_;\n".format(column_type, cname)
-                stringify_vars += "            {0} {1}\n".format("," if len(stringify_vars) > 0 else "", stringify_string)
+                variable_defs += "    {0} {1}_;\n".format(column_type, cname_pre)
+                stringify_vars += "                    {0} {1}\n".format("," if len(stringify_vars) > 0 else " ", stringify_string)
 
         with open("./cpp-record-class-template.h", 'r', encoding="utf-8-sig") as in_file:
             data = in_file.read()
@@ -94,8 +96,8 @@ def generate_all_tables_header(file_names, table_names):
     index = 0
     for file_name, table_name in zip(file_names, table_names):
         include_lines += "#include \"tables/{0}\"\n".format(file_name)
-        csv_entry_lines += "    {0} \"{1}\"\n".format("" if len(csv_entry_lines) == 0 else ",", table_name)
-        table_enum_lines += "    {0} {1}\n".format("" if len(table_enum_lines) == 0 else ",", table_name)
+        csv_entry_lines += "    {0} \"{1}\"\n".format(" " if len(csv_entry_lines) == 0 else ",", table_name)
+        table_enum_lines += "    {0} {1}\n".format(" " if len(table_enum_lines) == 0 else ",", table_name)
         load_table_lines += "CsvTable<{0}TableEntry> g_{1};\n".format(table_name, file_name.replace("/", "_").replace(".h", ""))
         load_table_lines += "void Load{0}Table() {{ g_{1}.LoadCsv(g_csv_path + g_table_csv_names[{2}] + g_csv_suffix); }}\n\n".format(table_name, file_name.replace("/", "_").replace(".h", ""), index)
         index += 1

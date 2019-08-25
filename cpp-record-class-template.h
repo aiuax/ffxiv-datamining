@@ -8,16 +8,7 @@ public:
     using StringInt64 = std::string;
     using StringBool = std::string;
 {2}
-    virtual void StringRow(std::array<std::string, {1}>& out_row) override
-    {{
-        std::array<std::string, {1}> stringified_row{{
-{3}        }};
-
-        out_row = stringified_row;
-    }}
-
-{4}
-}};
+{4}}};
 
 class {0}Table
     : public CsvTable<{0}TableEntry>
@@ -31,6 +22,11 @@ public:
         csv_reader.next_line(); // column names
         csv_reader.next_line(); // column types
 
+        string_header_ = std::move(
+            StringEntryArray{{
+{7}            }}
+        );
+
         return true;
     }}
 
@@ -41,15 +37,16 @@ public:
 {6}            )
         }};
 
+        if (success)
+        {{
+            out_entry.string_entry_ = std::move(
+                StringEntryArray{{
+{3}                }}
+            );
+        }}
+
         return success;
     }}
 
-    virtual void StringHeader(std::array<std::string, {1}>& out_header) override
-    {{
-        std::array<std::string, {1}> stringified_header{{
-{7}        }};
-
-        out_header = stringified_header;
-    }}
 }};
 
