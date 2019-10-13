@@ -4,6 +4,23 @@ import sys
 import re
 from shutil import copyfile
 
+def fixup_csv_file(in_file_path):
+    leaf = os.path.split(in_file_path)[1]
+    out_file_path = "./{0}.temp".format(leaf)
+    modified = False
+    with open(out_file_path, 'w', encoding="utf-8-sig") as out_file:
+        with open(in_file_path, 'r', encoding="utf-8-sig") as in_file:
+            line = in_file.readline()
+            while line:
+                while line.count('"') % 2:
+                    line = line.rstrip('\n')
+                    line += in_file.readline()
+                out_file.write(line)
+                line = in_file.readline()
+    if modified:
+        copyfile(out_file_path, in_file_path)
+    os.remove(out_file_path)
+
 def translate_csv_file(in_file_path, out_file_path, table_name):
     with open(out_file_path, 'w', encoding="utf-8-sig") as out_file:
         with open(in_file_path, 'r', encoding="utf-8-sig") as in_file:
@@ -165,6 +182,7 @@ if __name__ == "__main__":
                     continue
                 if not os.path.exists(os.path.dirname(out_filename)):
                     os.makedirs(os.path.dirname(out_filename))
+                fixup_csv_file(in_filename)
                 translate_csv_file(in_filename, out_filename, out_tablename)
 
     # generate_all_tables_header(file_names, table_names)
