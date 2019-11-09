@@ -147,6 +147,7 @@ def csv_ignore_list():
 if __name__ == "__main__":
     if len(sys.argv) < 3:
         print("usage: {0} csv_dir out_dir".format(sys.argv[0]))
+        sys.exit()
 
     csv_dir = sys.argv[1]
     out_dir = sys.argv[2]
